@@ -18,6 +18,8 @@ import re
 #  Go to "Certificates & secrets" -> "New client secret"
 #      Store the value of the secret in environment variable AZURE_CLIENT_SECRET
 #
+#  Install Python module microsoftgraph-python
+#
 
 # -------------------------------------------------------------------------
 #
@@ -103,7 +105,7 @@ client.set_token(token)
 
 # -------------------------------------------------------------------------
 #
-#  From this point on we can use the app
+#  From this point on we can call Graph functions...
 #
 
 # Get basic info about my account
