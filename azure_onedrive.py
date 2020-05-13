@@ -72,16 +72,20 @@ def mini_webserver():
             
 # -------------------------------------------------------------------------
 #
-#  log in
+#  Let's go
 #
 client = microsoftgraph.client.Client(client_id, client_secret=client_secret, account_type='common')
 token = try_refresh_token()     
     
 if token is None:    
+    # 
+    #  refreshing the token did not work so we need to log in.
+    #
     scopes=['files.readwrite', 'user.read', 'offline_access']    
     url = client.authorization_url(redirect_uri, scopes, state=None)
     # launch url in a browser
     os.startfile(url)
+    # and catch the redirect
     response = mini_webserver()
     # GET request contains the code in the form
     # code=xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx
@@ -91,7 +95,7 @@ if token is None:
     token = client.exchange_code(redirect_uri, code)
     print("Got token")
 
-# save the refresh token to disk so we don't need to login next time
+# save the refresh token to disk so we don't need to login next time 
 if 'refresh_token' in token:
     open('refresh_token.txt', 'w').write(token['refresh_token'])
     
