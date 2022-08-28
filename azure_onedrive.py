@@ -85,18 +85,25 @@ if token is None:
     #
     scopes=['files.readwrite', 'user.read', 'offline_access']    
     url = client.authorization_url(redirect_uri, scopes, state=None)
-    # launch url in a browser
-    os.startfile(url)
+    if 1:
+        print("Copy past this url in a browser of your choice")
+        print(url)
+    else:
+        print("launching url in default browser")
+        os.startfile(url)
     # and catch the redirect
     response = mini_webserver()
+    print(repr(response))
     # GET request contains the code in the form
     # code=xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx
-    code = re.search("code=([\w^-]+)", response).group(1)
+    # https://docs.microsoft.com/en-us/graph/auth-v2-user
+    code = re.search(r"code=([\w\.-]+)", response).group(1)
     print("Got code", code)
     # code has to be exchanged for the actual token
     token = client.exchange_code(redirect_uri, code)
     print("Got token")
 
+token = token.data
 # save the refresh token to disk so we don't need to login next time 
 if 'refresh_token' in token:
     open('refresh_token.txt', 'w').write(token['refresh_token'])
@@ -109,15 +116,12 @@ client.set_token(token)
 #
 
 # Get basic info about my account
-me = client.get_me()
+me = client.users.get_me()
 print(me)
 
 # Get folders and files at the root of my onedrive
-root_children_items = client.drive_root_children_items()
-items = root_children_items['value']
+root_children_items = client.files.drive_root_children_items()
+items = root_children_items.data['value']
 for x in items:
     print(x['name'], x['size'])
-
-#item = client.get("/me/drive/root:/data/mydata.zip")
-#print(item)
 
